@@ -43,7 +43,7 @@
 #endif
 
 #ifndef LEDS_BASE_ANIMATION_INDEX
-#define LEDS_BASE_ANIMATION_INDEX 2//1
+#define LEDS_BASE_ANIMATION_INDEX EFFECT_BUTTONBREATH_THEME//1
 #endif
 
 #ifndef LEDS_STATIC_COLOR_INDEX
@@ -63,7 +63,7 @@
 #endif
 
 #ifndef LEDS_CHASE_CYCLE_TIME
-#define LEDS_CHASE_CYCLE_TIME 85
+#define LEDS_CHASE_CYCLE_TIME 40
 #endif
 
 #ifndef LED_BRIGHTNESS_MAXIMUM
@@ -154,6 +154,7 @@ void configureAnimations(AnimationStation *as);
 AnimationHotkey animationHotkeys(Gamepad *gamepad);
 PixelMatrix createLedButtonLayout(ButtonLayout layout, int ledsPerPixel);
 PixelMatrix createLedButtonLayout(ButtonLayout layout, std::vector<uint8_t> *positions);
+bool animationButtonStatGet(Gamepad *gamepad);
 
 // Neo Pixel needs to tie into PlayerLEDS led Levels
 class NeoPicoPlayerLEDs : public PlayerLEDs
@@ -178,12 +179,14 @@ public:
 	uint32_t frame[100];
 private:
 	std::vector<uint8_t> * getLEDPositions(std::string button, std::vector<std::vector<uint8_t>> *positions);
+std::vector<std::vector<Pixel>> generatedLEDsCustom(std::vector<std::vector<uint8_t>> *positions);
 	std::vector<std::vector<Pixel>> generatedLEDButtons(std::vector<std::vector<uint8_t>> *positions);
 	std::vector<std::vector<Pixel>> generatedLEDStickless(std::vector<std::vector<uint8_t>> *positions);
 	std::vector<std::vector<Pixel>> generatedLEDWasd(std::vector<std::vector<uint8_t>> *positions);
 	std::vector<std::vector<Pixel>> generatedLEDWasdFBM(std::vector<std::vector<uint8_t>> *positions);
 	std::vector<std::vector<Pixel>> createLEDLayout(ButtonLayout layout, uint8_t ledsPerPixel, uint8_t ledButtonCount);
 	uint8_t setupButtonPositions();
+	uint8_t setupCustomLesdPositions();
 	const uint32_t intervalMS = 10;
 	absolute_time_t nextRunTime;
 	uint8_t ledCount;

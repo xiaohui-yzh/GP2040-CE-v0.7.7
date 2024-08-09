@@ -1,4 +1,7 @@
 add_library(AnimationStation
+src/Effects/Breath.cpp
+src/Effects/ButtonBreath.cpp
+src/Effects/CloseAll.cpp
 src/Effects/Chase.cpp
 src/Effects/CustomTheme.cpp
 src/Effects/CustomThemePressed.cpp
@@ -14,6 +17,7 @@ src/Effects
 )
 target_link_libraries(AnimationStation PUBLIC
 pico_stdlib
+pico_rand
 hardware_clocks
 hardware_timer
 NeoPico

@@ -16,17 +16,23 @@
 #include "Effects/Rainbow.hpp"
 #include "Effects/StaticColor.hpp"
 #include "Effects/StaticTheme.hpp"
+#include "Effects/Breath.hpp"
+#include "Effects/ButtonBreath.hpp"
+#include "Effects/CloseAll.hpp"
 
 typedef enum
 {
-  EFFECT_STATIC_COLOR,
-  EFFECT_RAINBOW,
-  EFFECT_CHASE,
-  EFFECT_STATIC_THEME,
+  EFFECT_STATIC_COLOR,          /* 静态颜色 */
+  EFFECT_RAINBOW,               /* 渐变 */
+  EFFECT_CHASE,                 /* 追逐 */
+  //EFFECT_STATIC_THEME,          /* 五彩斑斓 */
+  EFFECT_BREATH_THEME,          /* 呼吸灯 */
+  EFFECT_BUTTONBREATH_THEME,    /* 按键呼吸灯 */
+  EFFECT_CLOSEALL_THEME,        /* 关闭所有灯光 */
   EFFECT_CUSTOM_THEME,
 } AnimationEffects;
 
-const int TOTAL_EFFECTS = 4; // Exclude custom theme until verified present
+const int TOTAL_EFFECTS = EFFECT_CUSTOM_THEME; // Exclude custom theme until verified present
 
 typedef enum
 {

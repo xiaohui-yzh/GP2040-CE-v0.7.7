@@ -80,6 +80,12 @@ struct RGB {
     assert(false);
     return 0;
   }
+
+    inline void rgbbrightness(RGB &rgb, float brightnessX = 1.0F) const {
+        rgb.r *= brightnessX;
+        rgb.g *= brightnessX;
+        rgb.b *= brightnessX;
+    }
 };
 
 constexpr RGB ColorBlack(0, 0, 0);
@@ -98,7 +104,7 @@ constexpr RGB ColorPink(255, 0, 255);
 constexpr RGB ColorMagenta(255, 0, 128);
 
 inline const std::vector<RGB> colors {
-    ColorBlack,     ColorWhite,  ColorRed,     ColorOrange, ColorYellow,
+    /*ColorBlack,*/     ColorWhite,  ColorRed,     ColorOrange, ColorYellow,
     ColorLimeGreen, ColorGreen,  ColorSeafoam, ColorAqua,   ColorSkyBlue,
     ColorBlue,      ColorPurple, ColorPink,    ColorMagenta };
 
@@ -110,6 +116,7 @@ public:
   virtual ~Animation(){};
 
   static LEDFormat format;
+  static bool button_stat;
 
   bool notInFilter(Pixel pixel);
   virtual void Animate(RGB (&frame)[100]) = 0;

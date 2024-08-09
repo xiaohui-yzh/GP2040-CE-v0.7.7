@@ -1,6 +1,7 @@
 #include "Animation.hpp"
 
 LEDFormat Animation::format;
+bool Animation::button_stat;
 
 Animation::Animation(PixelMatrix &matrix) : matrix(&matrix) {
 }

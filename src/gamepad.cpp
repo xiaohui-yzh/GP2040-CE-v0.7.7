@@ -397,6 +397,7 @@ void Gamepad::read()
 {
 	// Need to invert since we're using pullups
 	Mask_t values = ~gpio_get_all();
+	Mask_t values_for_light = ~values;    //yaozhihui
 	// Get the midpoint value for the current mode
 	uint16_t joystickMid = GetJoystickMidValue(options.inputMode);
 
@@ -404,21 +405,21 @@ void Gamepad::read()
 		| (values & mapButtonFn->pinMask)   ? mapButtonFn->buttonMask : 0;
 
 	state.dpad = 0
-		| ((values & mapDpadUp->pinMask)    ? mapDpadUp->buttonMask : 0)
-		| ((values & mapDpadDown->pinMask)  ? mapDpadDown->buttonMask : 0)
-		| ((values & mapDpadLeft->pinMask)  ? mapDpadLeft->buttonMask  : 0)
-		| ((values & mapDpadRight->pinMask) ? mapDpadRight->buttonMask : 0)
+		| ((values_for_light & mapDpadUp->pinMask)    ? mapDpadUp->buttonMask : 0)
+		| ((values_for_light & mapDpadDown->pinMask)  ? mapDpadDown->buttonMask : 0)
+		| ((values_for_light & mapDpadLeft->pinMask)  ? mapDpadLeft->buttonMask  : 0)
+		| ((values_for_light & mapDpadRight->pinMask) ? mapDpadRight->buttonMask : 0)
 	;
 
 	state.buttons = 0
-		| ((values & mapButtonB1->pinMask)  ? mapButtonB1->buttonMask  : 0)
-		| ((values & mapButtonB2->pinMask)  ? mapButtonB2->buttonMask  : 0)
-		| ((values & mapButtonB3->pinMask)  ? mapButtonB3->buttonMask  : 0)
-		| ((values & mapButtonB4->pinMask)  ? mapButtonB4->buttonMask  : 0)
-		| ((values & mapButtonL1->pinMask)  ? mapButtonL1->buttonMask  : 0)
-		| ((values & mapButtonR1->pinMask)  ? mapButtonR1->buttonMask  : 0)
-		| ((values & mapButtonL2->pinMask)  ? mapButtonL2->buttonMask  : 0)
-		| ((values & mapButtonR2->pinMask)  ? mapButtonR2->buttonMask  : 0)
+		| ((values_for_light & mapButtonB1->pinMask)  ? mapButtonB1->buttonMask  : 0)
+		| ((values_for_light & mapButtonB2->pinMask)  ? mapButtonB2->buttonMask  : 0)
+		| ((values_for_light & mapButtonB3->pinMask)  ? mapButtonB3->buttonMask  : 0)
+		| ((values_for_light & mapButtonB4->pinMask)  ? mapButtonB4->buttonMask  : 0)
+		| ((values_for_light & mapButtonL1->pinMask)  ? mapButtonL1->buttonMask  : 0)
+		| ((values_for_light & mapButtonR1->pinMask)  ? mapButtonR1->buttonMask  : 0)
+		| ((values_for_light & mapButtonL2->pinMask)  ? mapButtonL2->buttonMask  : 0)
+		| ((values_for_light & mapButtonR2->pinMask)  ? mapButtonR2->buttonMask  : 0)
 		| ((values & mapButtonS1->pinMask)  ? mapButtonS1->buttonMask  : 0)
 		| ((values & mapButtonS2->pinMask)  ? mapButtonS2->buttonMask  : 0)
 		| ((values & mapButtonL3->pinMask)  ? mapButtonL3->buttonMask  : 0)
@@ -450,6 +451,7 @@ void Gamepad::hotkey()
 
 	GamepadHotkey action = HOTKEY_NONE;
 
+#if 0
 	if (pressedHotkey(hotkeyOptions.hotkey01))	action = selectHotkey(hotkeyOptions.hotkey01);
 	else if (pressedHotkey(hotkeyOptions.hotkey02))	action = selectHotkey(hotkeyOptions.hotkey02);
 	else if (pressedHotkey(hotkeyOptions.hotkey03))	action = selectHotkey(hotkeyOptions.hotkey03);
@@ -467,6 +469,17 @@ void Gamepad::hotkey()
 	else if (pressedHotkey(hotkeyOptions.hotkey15))	action = selectHotkey(hotkeyOptions.hotkey15);
 	else if (pressedHotkey(hotkeyOptions.hotkey16))	action = selectHotkey(hotkeyOptions.hotkey16);
 	else                                        lastAction = HOTKEY_NONE;
+#else
+    if (pressedHotkey(hotkeyOptions.hotkey05)) {
+        action = selectHotkey(hotkeyOptions.hotkey05);
+    } else if (pressedHotkey(hotkeyOptions.hotkey06)) {
+        action = selectHotkey(hotkeyOptions.hotkey06);
+    } else if (pressedHotkey(hotkeyOptions.hotkey07)) {
+        action = selectHotkey(hotkeyOptions.hotkey07);
+    } else {
+        lastAction = HOTKEY_NONE;
+    }
+#endif
 	processHotkeyIfNewAction(action);
 }
 
@@ -496,9 +509,9 @@ void Gamepad::processHotkeyIfNewAction(GamepadHotkey action)
 		case HOTKEY_S2_BUTTON         : state.buttons |= GAMEPAD_MASK_S2; break;
 		case HOTKEY_A1_BUTTON         : state.buttons |= GAMEPAD_MASK_A1; break;
 		case HOTKEY_A2_BUTTON         : state.buttons |= GAMEPAD_MASK_A2; break;
-		case HOTKEY_SOCD_UP_PRIORITY  : options.socdMode = SOCD_MODE_UP_PRIORITY; reqSave = true; break;
-		case HOTKEY_SOCD_NEUTRAL      : options.socdMode = SOCD_MODE_NEUTRAL; reqSave = true; break;
-		case HOTKEY_SOCD_LAST_INPUT   : options.socdMode = SOCD_MODE_SECOND_INPUT_PRIORITY; reqSave = true; break;
+		case HOTKEY_SOCD_UP_PRIORITY  : options.socdMode = SOCD_MODE_UP_PRIORITY; reqSave = false; break;
+		case HOTKEY_SOCD_NEUTRAL      : options.socdMode = SOCD_MODE_NEUTRAL; reqSave = false; break;
+		case HOTKEY_SOCD_LAST_INPUT   : options.socdMode = SOCD_MODE_SECOND_INPUT_PRIORITY; reqSave = false; break;
 		case HOTKEY_SOCD_FIRST_INPUT  : options.socdMode = SOCD_MODE_FIRST_INPUT_PRIORITY;  reqSave = true;break;
 		case HOTKEY_SOCD_BYPASS       : options.socdMode = SOCD_MODE_BYPASS; reqSave = true; break;
 		case HOTKEY_REBOOT_DEFAULT    : System::reboot(System::BootMode::DEFAULT); break;

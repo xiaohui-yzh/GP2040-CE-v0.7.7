@@ -35,6 +35,7 @@
 #include "usb_driver.h"
 #include "tusb.h"
 
+#include "pico/stdio.h"
 
 static const uint32_t REBOOT_HOTKEY_ACTIVATION_TIME_MS = 50;
 static const uint32_t REBOOT_HOTKEY_HOLD_TIME_MS = 4000;
@@ -64,6 +65,15 @@ void GP2040::setup() {
     Gamepad * gamepad = Storage::getInstance().GetGamepad();
     gamepad->setup();
     this->initializeStandardGpio();
+
+    stdio_init_all();
+    printf("%s:%d stdio_init_all success\n", __FUNCTION__, __LINE__);
+    gpio_init(LIGHT_BUTTON_EN);
+    gpio_set_dir(LIGHT_BUTTON_EN, GPIO_OUT); // Set as GPIO_OUT
+    gpio_put(LIGHT_BUTTON_EN, 1);
+    Config config = Storage::getInstance().getConfig();
+    printf("%s:%d config.gamepadOptions.socdMode=[%d]\n", __FUNCTION__, __LINE__,
+            config.gamepadOptions.socdMode);
 
     const GamepadOptions& gamepadOptions = Storage::getInstance().getGamepadOptions();
 
@@ -166,6 +176,7 @@ void GP2040::setup() {
 					gamepad->save();
 				}
 
+				printf("%s:%d inputMode:%d\n", __FUNCTION__, __LINE__, inputMode);
 				initialize_driver(inputMode);
 				break;
 			}
@@ -318,7 +329,7 @@ GP2040::BootAction GP2040::getBootAction() {
                 bool webConfigLocked  = forcedSetupOptions.mode == FORCED_SETUP_MODE_LOCK_WEB_CONFIG ||
                                         forcedSetupOptions.mode == FORCED_SETUP_MODE_LOCK_BOTH;
 
-				if (gamepad->pressedS1() && gamepad->pressedS2() && gamepad->pressedUp()) {
+				if (gamepad->pressedS1() && gamepad->pressedS2()/* && gamepad->pressedUp() */) {
 					return BootAction::ENTER_USB_MODE;
 				} else if (!webConfigLocked && gamepad->pressedS2()) {
 					return BootAction::ENTER_WEBCONFIG_MODE;

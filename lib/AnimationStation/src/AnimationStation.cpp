@@ -106,7 +106,7 @@ void AnimationStation::Animate() {
   }
 
   baseAnimation->Animate(this->frame);
-  buttonAnimation->Animate(this->frame);
+  //buttonAnimation->Animate(this->frame);
 }
 
 void AnimationStation::Clear() { memset(frame, 0, sizeof(frame)); }
@@ -136,6 +136,18 @@ void AnimationStation::SetMode(uint8_t mode) {
   this->Clear();
 
   switch (newEffect) {
+  case AnimationEffects::EFFECT_BREATH_THEME:
+      this->baseAnimation = new Breath(matrix);
+      this->buttonAnimation = new StaticColor(matrix, lastPressed);
+      break;
+  case AnimationEffects::EFFECT_BUTTONBREATH_THEME:
+      this->baseAnimation = new ButtonBreath(matrix);
+      this->buttonAnimation = new StaticColor(matrix, lastPressed);
+      break;
+  case AnimationEffects::EFFECT_CLOSEALL_THEME:
+      this->baseAnimation = new CloseAll(matrix);
+      this->buttonAnimation = new StaticColor(matrix, lastPressed);
+      break;
   case AnimationEffects::EFFECT_RAINBOW:
     this->baseAnimation = new Rainbow(matrix);
     this->buttonAnimation = new StaticColor(matrix, lastPressed);
@@ -144,10 +156,12 @@ void AnimationStation::SetMode(uint8_t mode) {
     this->baseAnimation = new Chase(matrix);
     this->buttonAnimation = new StaticColor(matrix, lastPressed);
     break;
+#if 0
   case AnimationEffects::EFFECT_STATIC_THEME:
     this->baseAnimation = new StaticTheme(matrix);
     this->buttonAnimation = new StaticColor(matrix, lastPressed);
     break;
+#endif
   case AnimationEffects::EFFECT_CUSTOM_THEME:
     this->baseAnimation = new CustomTheme(matrix);
     this->buttonAnimation = new CustomThemePressed(matrix, lastPressed);

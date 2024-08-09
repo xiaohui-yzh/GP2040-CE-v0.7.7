@@ -163,6 +163,7 @@ void NeoPicoLEDAddon::process()
 	else
 		as.ClearPressed();
 
+	Animation::button_stat = animationButtonStatGet(gamepad);
 	as.Animate();
 
 	if (turnOffWhenSuspended && get_usb_suspended()) {
@@ -209,6 +210,83 @@ std::vector<uint8_t> * NeoPicoLEDAddon::getLEDPositions(string button, std::vect
 // Macro for Pixel() declarations
 #define PIXEL(BUTTON, MASK) \
 	Pixel(buttonPositions[BUTTON], MASK, *getLEDPositions(BUTTON, positions))
+
+/**
+ * @brief Create an LED layout using a 2x4 matrix.
+ */
+std::vector<std::vector<Pixel>> NeoPicoLEDAddon::generatedLEDsCustom(std::vector<std::vector<uint8_t>> *positions)
+{
+#define MY_LEDS_PIXEL(num) PIXEL(#num, (1U << num)),
+    std::vector<std::vector<Pixel>> pixels =
+    {
+        {
+            MY_LEDS_PIXEL(0)
+            MY_LEDS_PIXEL(1)
+        },
+        {   MY_LEDS_PIXEL(2)
+            MY_LEDS_PIXEL(3)
+        },
+        {
+            MY_LEDS_PIXEL(4)
+            MY_LEDS_PIXEL(5)
+        },
+        {
+            MY_LEDS_PIXEL(6)
+            MY_LEDS_PIXEL(7)
+        },
+        {
+            MY_LEDS_PIXEL(8)
+            MY_LEDS_PIXEL(9)
+        },
+        {
+            MY_LEDS_PIXEL(10)
+            MY_LEDS_PIXEL(11)
+        },
+        {
+            MY_LEDS_PIXEL(12)
+            MY_LEDS_PIXEL(13)
+        },
+        {
+            MY_LEDS_PIXEL(14)
+            MY_LEDS_PIXEL(15)
+        },
+        {
+            MY_LEDS_PIXEL(16)
+            MY_LEDS_PIXEL(17)
+        },
+        {
+            MY_LEDS_PIXEL(18)
+            MY_LEDS_PIXEL(19)
+        },
+        {
+            MY_LEDS_PIXEL(20)
+            MY_LEDS_PIXEL(21)
+        },
+        {
+            MY_LEDS_PIXEL(22)
+            MY_LEDS_PIXEL(23)
+        },
+        {
+            MY_LEDS_PIXEL(24)
+            MY_LEDS_PIXEL(25)
+        },
+        {
+            MY_LEDS_PIXEL(26)
+            MY_LEDS_PIXEL(27)
+        },
+        {
+            MY_LEDS_PIXEL(28)
+            MY_LEDS_PIXEL(29)
+        },
+        {
+            MY_LEDS_PIXEL(30)
+            MY_LEDS_PIXEL(31)
+        }
+    };
+#undef MY_LEDS_PIXEL
+
+    return pixels;
+}
 
 /**
  * @brief Create an LED layout using a 2x4 matrix.
@@ -456,10 +534,61 @@ std::vector<std::vector<Pixel>> NeoPicoLEDAddon::createLEDLayout(ButtonLayout la
 
 		case BUTTON_LAYOUT_OPENCORE0WASDA:
 			return generatedLEDStickless(&positions);
+
+		case BUTTON_LAYOUT_CUSTOMA:
+		    return generatedLEDsCustom(&positions);
 	}
 
 	assert(false);
 	return std::vector<std::vector<Pixel>>();
+}
+
+uint8_t NeoPicoLEDAddon::setupCustomLesdPositions()
+{
+    const LEDOptions& ledOptions = Storage::getInstance().getLedOptions();
+    buttonPositions.clear();
+#define LED_POS(num)    buttonPositions.emplace(#num, num);
+    LED_POS(0)
+    LED_POS(1)
+    LED_POS(2)
+    LED_POS(3)
+    LED_POS(4)
+    LED_POS(5)
+    LED_POS(6)
+    LED_POS(7)
+    LED_POS(8)
+    LED_POS(9)
+    LED_POS(10)
+    LED_POS(11)
+    LED_POS(12)
+    LED_POS(13)
+    LED_POS(14)
+    LED_POS(15)
+    LED_POS(16)
+    LED_POS(17)
+    LED_POS(18)
+    LED_POS(19)
+    LED_POS(20)
+    LED_POS(21)
+    LED_POS(22)
+    LED_POS(23)
+    LED_POS(24)
+    LED_POS(25)
+    LED_POS(26)
+    LED_POS(27)
+    LED_POS(28)
+    LED_POS(29)
+    LED_POS(30)
+    LED_POS(31)
+#undef LED_POS
+    uint8_t buttonCount = 0;
+    for (auto const& buttonPosition : buttonPositions)
+    {
+        if (buttonPosition.second > -1)
+            buttonCount++;
+    }
+
+    return buttonCount;
 }
 
 uint8_t NeoPicoLEDAddon::setupButtonPositions()
@@ -497,7 +626,8 @@ uint8_t NeoPicoLEDAddon::setupButtonPositions()
 void NeoPicoLEDAddon::configureLEDs()
 {
 	const LEDOptions& ledOptions = Storage::getInstance().getLedOptions();
-	uint8_t buttonCount = setupButtonPositions();
+	//uint8_t buttonCount = setupButtonPositions();
+	uint8_t buttonCount = setupCustomLesdPositions();
 	vector<vector<Pixel>> pixels = createLEDLayout(static_cast<ButtonLayout>(ledOptions.ledLayout), ledOptions.ledsPerButton, buttonCount);
 	matrix.setup(pixels, ledOptions.ledsPerButton);
 	ledCount = matrix.getLedCount();
@@ -567,4 +697,18 @@ AnimationHotkey animationHotkeys(Gamepad *gamepad)
 	}
 
 	return action;
+}
+
+bool animationButtonStatGet(Gamepad *gamepad)
+{
+    bool stat;
+
+    if (gamepad == NULL) {
+        return false;
+    }
+
+    stat = (gamepad->state.buttons != 0)            ||
+           (gamepad->state.dpad    != 0);
+
+    return stat;
 }

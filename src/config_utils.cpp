@@ -401,6 +401,7 @@ void ConfigUtils::initUnsetPropertiesWithDefaults(Config& config)
 
     // ledOptions
     INIT_UNSET_PROPERTY(config.ledOptions, dataPin, BOARD_LEDS_PIN);
+    INIT_UNSET_PROPERTY(config.ledOptions, myLedsPin, MY_LEDS_PIN);
     INIT_UNSET_PROPERTY(config.ledOptions, ledFormat, static_cast<LEDFormat_Proto>(LED_FORMAT));
     INIT_UNSET_PROPERTY(config.ledOptions, ledLayout, MY_LED_LAYOUT);
     INIT_UNSET_PROPERTY(config.ledOptions, ledsPerButton, LEDS_PER_PIXEL);

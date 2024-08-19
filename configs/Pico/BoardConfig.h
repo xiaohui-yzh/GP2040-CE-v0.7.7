@@ -39,6 +39,7 @@
 #define GPIO_PIN_15 GpioAction::BUTTON_PRESS_FN
 #endif
 #define LIGHT_BUTTON_EN 22
+#define MY_LEDS_PIN     23
 
 // Keyboard Mapping Configuration
 //                                            // GP2040 | Xinput | Switch  | PS3/4/5  | Dinput | Arcade |
